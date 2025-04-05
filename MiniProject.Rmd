@@ -1,0 +1,653 @@
+ 
+```{r}
+# Load necessary libraries
+library(dplyr)       # For data manipulation
+library(tidyr)       # For data tidying
+library(stringr)     # For string manipulation
+library(caret)       # For model training and preprocessing
+library(data.table)  # For fast data manipulation
+library('naniar')
+#library('stats')
+#library('base')
+library("e1071")
+```
+
+
+```{r}
+# Load the dataset
+df <- read.csv("C:/Users/anuva/Desktop/DS/dataset_DT.csv")
+str(df)
+```
+
+
+####Getting the unique values for all columns
+```{r}
+unique_values<-lapply(df,unique)
+```
+####print the unique values 
+```{r}
+for (col in names(unique_values)){
+  cat("unique values in column", col, ":\n")
+  print(unique_values[[col]])
+  cat("\n")
+}
+```
+
+####check null values
+```{r}
+vis_miss(df)
+```
+
+####In the above plot it is clear that the percentage of missing values in DAY col is less than 5%.
+
+##Remove missing Values in the day column
+```{r}
+df_new <- df[!is.na(df$day), ]
+head(df_new)
+```
+
+
+```{r}
+df$data_val <- "Before"
+df_new$data_val <- "After"
+df_comb<- rbind(df,df_new)
+```
+
+
+```{r}
+ggplot(df_comb, aes(x = day,fill = data_val ))+
+  geom_histogram(position="identity", alpha=0.7, bins=13)+
+  labs(title="Comparision of 'day' Distribution", x= "Day of Last Contact", y ="Frequency")+
+  theme_minimal()
+```
+
+
+```{r}
+summary(df$day)
+```
+
+###Summary of new dataset
+```{r}
+summary(df_new$day)
+```
+
+###to check for unknown Values
+```{r}
+unknown_cols <- c()
+for (col in names(df_new)) {
+  if (any(df_new[[col]] == "unknown")) {
+    unknown_cols <- c(unknown_cols, col)  
+  }
+}
+
+print(unknown_cols)
+```
+
+## Checking for each column ##
+## For Columns Job, education, poutcome  ##
+
+## JOB column ##
+```{r}
+df_new$job[df_new$job == "unknown"] <- NA
+vis_miss(df_new)
+
+job <- table(df_new$job)
+barplot(job, main = "Bar Plot for Job",   
+        xlab = "Category", ylab = "Frequency", col = "lightblue")
+```
+
+
+```{r}
+miss_var_summary(df_new)
+```
+
+####Filling these missing values with Mode
+```{r}
+df_sam <- df_new
+get_mode <- function(x) {
+  unique_x <- unique(x)
+  unique_x[which.max(tabulate(match(x, unique_x)))]
+}
+```
+
+
+```{r}
+mode_job <- get_mode(df_sam$job)
+df_sam$job[is.na(df_sam$job)] <- mode_job
+```
+
+
+```{r}
+unique(df_new$job)
+```
+
+###now we wont see any NA values
+```{r}
+unique(df_sam$job)
+
+```
+
+# New column made to comapare between original and imputed data
+```{r}
+df_new$data_val <- "Before"
+df_sam$data_val <- "After"
+
+# Combining both datasets
+df_comb <- rbind(df_new, df_sam)
+
+#plot using ggplot
+ggplot(df_comb, aes(x = job, fill = data_val)) +
+  geom_bar(position = "dodge") +  # Use dodge to place bars side-by-side
+  labs(title = "Job Distribution: Before vs. After",
+       x = "Job", y = "Count") +
+  theme_minimal()
+
+```
+
+
+```{r}
+df_new <- df_sam
+```
+
+## EDUCATION column ##
+```{r}
+unique(df_new$education)
+
+ggplot(df_new, aes(x = education)) +
+  geom_bar(position = "dodge", fill = "lightblue") +  # Side-by-side bars for comparison
+  labs(title = "Education Distribution",
+       x = "Education", y = "Count") +
+  theme_minimal()
+```
+
+
+```{r}
+cat_count <- table(df_new$education)
+
+# Calculate the percentage for each category
+cat_per <- prop.table(cat_count) * 100
+
+# Print the category percentages
+print(round(cat_per, 2))
+```
+
+### We can drop "" records as we only have 1.74% of "" values and its also under 5% 
+```{r}
+df_new <- df_new[df_new$education %in% c("primary", "secondary", "tertiary", "unknown"), ]
+#final values
+unique(df_new$education)
+```
+
+###Visualization for final data (according to its %)
+```{r}
+cat_count <- table(df_new$education)
+cat_per <- prop.table(cat_count) * 100
+print(round(cat_per, 2))
+```
+
+
+```{r}
+ggplot(df_new, aes(x = education)) +
+  geom_bar(position = "dodge",fill = "lightblue") +  # Side-by-side bars for comparison
+  labs(title = "Changed Education Distribution",
+       x = "Education", y = "Count") +
+  theme_minimal()
+```
+
+###Now we will work on the unknown values and impute values for them (using proportionate imputation)
+```{r}
+props <- c("primary" = 14.08, "secondary" = 49.79, "tertiary" = 31.97)
+props <- props / sum(props)  
+
+#getting all the unknown values
+unknown_vals <- which(df_new$education == "unknown")  
+
+# Sample from the known labels according to their proportion %
+imputed_vals <- sample(names(props), length(unknown_vals), replace = TRUE, prob = props)
+```
+
+
+```{r}
+df_sam1 <- df_new
+# Replace the 'unknown' values with the imputed values
+df_sam1$education[unknown_vals] <- imputed_vals
+```
+
+
+```{r}
+
+df_sam$data_val <- "Before"
+df_new$data_val <- "After_Drop"
+df_sam1$data_val <- "After_imputation"
+
+# Combine the all 3 datasets
+df_comb <- rbind(df_sam, df_new, df_sam1)
+
+# Create the bar graph using ggplot2
+ggplot(df_comb, aes(x = education, fill = data_val)) +
+  geom_bar(position = "dodge") +  # Use dodge to place bars side-by-side
+  labs(title = "Education Distribution Comparision: Before vs. After Drop vs. After Imputation",
+       x = "Education Category", y = "Count") +
+  theme_minimal()
+
+```
+
+
+```{r}
+df_new<-df_sam1
+```
+
+### CONTACT Column ###
+```{r}
+unique(df_new$contact)
+```
+
+
+```{r}
+ggplot(df_new, aes(x = contact)) +
+  geom_bar(position = "dodge", fill = "lightblue") + 
+  labs(title = "Comparison of contact Distribution",
+       x = "contact Category", y = "Count") +
+  theme_minimal()
+
+cat_count <- table(df_new$contact)
+cat_per <- prop.table(cat_count) * 100
+print(round(cat_per, 2))
+```
+
+### Since the % for unknown is more than 5.5% and about 23.36% of the column we will keep it
+## POUTCOME Column ##
+```{r}
+ggplot(df_new, aes(x = poutcome)) +
+  geom_bar(position = "dodge", fill = "lightblue") + 
+  labs(title = "Comparison of contact Distribution",
+       x = "contact Category", y = "Count") +
+  theme_minimal()
+
+```
+
+
+```{r}
+cat_count <- table(df_new$poutcome)
+cat_per <- prop.table(cat_count) * 100
+print(round(cat_per, 2))
+```
+
+
+### we will go with proportional imputing for this for 'other' values
+```{r}
+props <- c("failure" = 15.20,  "success" = 7.35)
+props <- props / sum(props)  
+
+unknown_vals <- which(df_new$poutcome == "other")
+imputed_vals <- sample(names(props), length(unknown_vals), replace = TRUE, prob = props)
+
+df_sam2 <- df_new
+```
+
+
+```{r}
+# 1st Impute 'unknown' values with the imputed_vals
+df_sam2$poutcome[unknown_vals] <- imputed_vals
+```
+
+
+```{r}
+cat_count <- table(df_sam2$poutcome)
+cat_per <- prop.table(cat_count) * 100
+print(round(cat_per, 2))
+```
+
+
+```{r}
+# Final Proportional Imputation 
+props <- c("failure" = 18.94, "success" = 9.15)
+props <- props / sum(props)  
+
+unknown_vals <- which(df_new$poutcome == "unknown")
+imputed_vals <- sample(names(props), length(unknown_vals), replace = TRUE, prob = props)
+df_sam <- df_sam2
+
+df_sam$poutcome[unknown_vals] <- imputed_vals
+```
+
+####calculating final %
+```{r}
+cat_count <- table(df_sam$poutcome)
+cat_per <- prop.table(cat_count) * 100
+print(round(cat_per, 2))
+```
+
+
+```{r}
+# Comparing the results
+df_new$data_val <- "Before"
+df_sam$data_val <- "After"
+
+
+df_comb <- rbind(df_new, df_sam)
+
+ggplot(df_comb, aes(x = poutcome, fill = data_val)) +
+  geom_bar(position = "dodge") +  # Use dodge to place bars side-by-side
+  labs(title = "Comparison of Poutcomes",
+       x = "poutcome", y = "Count") +
+  theme_minimal()
+
+```
+
+
+```{r}
+df_new <- df_sam
+```
+
+### MONTH Column ###
+## through histogram ##
+```{r}
+month <- table(df_new$month)
+barplot(month, main = "Bar Plot of Categories", 
+        xlab = "Category", ylab = "Frequency", col = "lightblue")
+```
+
+
+```{r}
+cat_count <- table(df_new$month)
+cat_per <- prop.table(cat_count) * 100
+# Print the category percentages
+print(round(cat_per, 2))
+```
+
+
+```{r}
+# since the % for empty string is very we will drop it
+df_new[df_new$month == "", ]
+df_new <- df_new[df_new$month != "", ]
+```
+```{r}
+
+cat_count <- table(df_new$month)
+cat_per <- prop.table(cat_count) * 100
+print(round(cat_per, 2))
+```
+
+
+```{r}
+length(df_new)
+```
+
+## Finding Duplicate rows ##
+```{r}
+sum(duplicated(df_new))   # o/p is 0 meaning no duplicates present
+```
+
+## Outliers Detection ##
+```{r}
+str(df_new)
+```
+
+####Plotting Continuous columns for checking outliers
+```{r}
+cont_cols <- c("age", "balance", "duration", "campaign", "pdays", "previous") 
+for (col in cont_cols) {
+  boxplot(df_new[[col]], main = paste("Boxplot of", col))
+}
+```
+
+
+```{r}
+df_check1<- df_new
+unique(df_check1$education)
+```
+
+
+```{r}
+library(e1071)
+i<-0
+for (col in cont_cols) {
+  Q1 <- quantile(df_new[[col]], 0.25)
+  Q3 <- quantile(df_new[[col]], 0.75)
+  IQR <- Q3 - Q1
+  lower_bound <- Q1 - 1.5 * IQR
+  upper_bound <- Q3 + 1.5 * IQR
+  outliers <- df_check1[[col]][df_check1[[col]] < lower_bound | df_check1[[col]] > upper_bound]
+  i<- i+length(outliers)
+  print(paste("Outliers", col, ":", length(outliers), "% of Outliers:", (length(outliers)*100)/nrow(df_check1)))
+}
+print(paste("lost data %:", (i*100/nrow(df_check1)),"%" ))
+```
+
+
+```{r}
+# Loop through each continuous column for outlier imputation
+for (col in cont_cols) {
+  
+  # Calculate Q1, Q3, and IQR
+  Q1 <- quantile(df_new[[col]], 0.25, na.rm = TRUE)
+  Q3 <- quantile(df_new[[col]], 0.75, na.rm = TRUE)
+  IQR <- Q3 - Q1
+  
+  # Define outlier boundaries
+  lower_bound <- Q1 - 1.5 * IQR
+  upper_bound <- Q3 + 1.5 * IQR
+ 
+  # Impute the outliers with the Q3 value
+  df_check1[[col]][df_check1[[col]] < lower_bound | df_check1[[col]] > upper_bound] <- Q3
+  
+  # Print status
+  print(paste("Outliers found :", col, "imputation done with Q3:", Q3))
+}
+
+```
+
+
+```{r}
+##After imputation for outliers
+unique(df_check1$education)
+
+i<-0
+for (col in cont_cols) {
+  Q1 <- quantile(df_new[[col]], 0.25)
+  Q3 <- quantile(df_new[[col]], 0.75)
+  IQR <- Q3 - Q1
+  lower_bound <- Q1 - 1.5 * IQR
+  upper_bound <- Q3 + 1.5 * IQR
+  outliers <- df_check1[[col]][df_check1[[col]] < lower_bound | df_check1[[col]] > upper_bound]
+  i<- i+length(outliers)
+  print(paste("Outliers in", col, ":", length(outliers), "Percentage of Outliers:", (length(outliers)*100)/nrow(df_check1)))
+  
+}
+
+print(paste("lost data %:", (i*100/nrow(df_check1)),"%" ))
+```
+
+
+```{r}
+
+```
+
+## Finally data-loss is 0
+## Now plot and check 
+```{r}
+cont_cols <- c("age", "balance", "duration", "campaign", "pdays", "previous") # Replace with actual column names
+for (col in cont_cols) {
+  boxplot(df_check1[[col]], main = paste("Boxplot of", col))
+}
+```
+
+#Data Transformation 
+```{r}
+df_check2 <- df_check1
+df_check2 <- df_check2 %>% select(-data_val)
+
+# normalization function
+normalize <- function(x) {
+  return ((x - min(x)) / (max(x) - min(x)))
+}
+
+
+# Apply normalization to the selected columns
+df_check2[cont_cols] <- lapply(df_check2[cont_cols], normalize)
+
+# Check the result
+head(df_check2)
+
+```
+```{r}
+# taking df_check2 for instance (our dataset)
+cat_cols <- sapply(df_check2, is.factor) | sapply(df_check2, is.character)
+cat_cols <- names(df_check2)[cat_cols]
+
+sum(is.na(df_check2$education))
+str(df_check2)
+```
+
+
+```{r}
+library(caret)   ## PCA
+# Specify the one-hot encode
+cols_enc <- c("job", "marital", "default", "housing", "loan", "contact", "month", "poutcome")
+
+# Create dummy variables
+dummy <- dummyVars(paste("~", paste(cols_enc, collapse = " + ")), data = df_check2)
+enc_data <- predict(dummy, newdata = df_check2)
+
+# Combine with the orig data (excl the original categorical cols)
+df_dt <- cbind(df_check2[, !(names(df_check2) %in% cols_enc)], as.data.frame(enc_data))
+
+# display first few rows of the final dataset
+head(df_dt)
+```
+
+
+```{r}
+unique(df_dt$education)
+# Specify the levels in the order we have to encode
+df_dt$education <- as.numeric(factor(df_dt$education, 
+                                        levels = c("primary", "secondary", "tertiary")))
+```
+
+
+```{r}
+# View the updated dataset
+head(df_dt)
+```
+
+
+```{r}
+str(df_dt)
+```
+
+
+```{r}
+unique(df_dt$y)
+```
+
+
+```{r}
+df_dt$y <- as.numeric(factor(df_dt$y, 
+                                levels = c("yes", "no")))
+# View the updated dataset
+head(df_dt)
+```
+
+#Data Reduction 
+```{r}
+# Check correlation between continuous variables and the target
+corr_matrix <- cor(df_dt[, sapply(df_dt, is.numeric)], use = "complete.obs")
+print(corr_matrix['y',])
+
+sort_corr <- sort(abs(corr_matrix["y", ]), decreasing = TRUE)
+```
+
+
+```{r}
+# Display the top 6 most influential features (excluding y itself)
+top_6_features <- names(sort_corr)[2:7]
+top_6_corr <- sort_corr[2:7]
+
+```
+
+```{r}
+print(top_6_features)
+```
+
+# PCA requires standardized data (now we can go ahead with it)
+# Perform PCA
+
+```{r}
+pca_result <- prcomp(df_dt, center = TRUE, scale. = TRUE)
+
+# Summary of PCA to check variance explained
+summary(pca_result)
+```
+
+
+```{r}
+pca_summary <- summary(pca_result)
+#Extract proportion of variance explained by each principal component
+var <- pca_summary$importance[2,]
+
+#number of components that explain at least 90% variance
+cumulative_var <- cumsum(var)
+n_comp <- which(cumulative_var >= 0.90)[1]
+
+# Print how many components are needed to preserve 90% of variance
+cat("No. of features for atleast 90% variance: ", n_comp, "\n")
+```
+
+
+```{r}
+layout(matrix(1))  # to keep a single plot layout
+par(mar = c(5, 4, 4, 2) + 0.1)  # Standard margins
+
+plot(cumulative_var, type = "b", main = "Cumulative Variance Explained by PCA",
+     xlab = "Number of Components", ylab = "Cumulative Variance Explained")
+abline(h = 0.90, col = "red", lty = 2)
+```
+```{r}
+pca = preProcess(x= df_dt, method='pca', pcaComp = 30)
+df_pca = predict(pca, df_dt)
+str(df_pca)
+```
+
+
+```{r}
+library("MASS")
+```
+
+##Heatmaps showing relation between housing and target 
+```{r}
+ht_map <- df_dt%>%
+  count(housingno,y)
+  
+ggplot(ht_map, aes(x = housingno, y = y, fill = n))+
+  geom_tile()+
+  scale_fill_gradient(low="pink", high = "black")+
+  labs(title = "heatmap for housing(No) vs Target (y)",x = "housing(no)",y = "y",fill = "Count")
+```
+
+```{r}
+ht_map <- df_dt%>%
+  count(housingyes,y)
+  
+ggplot(ht_map, aes(x = housingyes, y = y, fill = n))+
+  geom_tile()+
+  scale_fill_gradient(low="pink", high = "black")+
+  labs(title = "heatmap for housing(YES) vs Target (y)",x = "housing(yes)",y = "y",fill = "Count")
+```
+From the heatmap comparing housingno and housingyes and the target variable y, we can derive several insights:
+
+The color intensity indicates the frequency of each combination. Darker cells represent higher counts, showing which combinations of housingno/housingyes and y` are more prevalent.
+We can identify trends or relationships between `housingno` and `y`. For example, if a particular `housingno` consistently shows high counts for specific values of `y`, it may suggest a correlation.
+Lighter cells signify low occurrences, highlighting rare combinations that might warrant further investigation or could be indicative of special cases.
+   
+Both housingno and housingyes heatmaps are opposite of each other stating the correctness of the observations 
+```{r}
+#Bar plot to see nature of y with respect to month
+month <- table(df_check1$month,df_check1$y)
+
+barplot(month,beside = TRUE,legend = TRUE, main = "Bar Plot",xlab = "Category", ylab = "Frequency")
+
+```
+By the above Bar graph we can see the target values according to the month of the year.Like the value for y is no mostly for the month for may. So if y is some sort of plan that means in the month of may people didnt opt for that particular plan.
+
+
