@@ -30,7 +30,8 @@ The goal is to identify **which industries, countries, and companies** were most
 | 5 | Transportation | 64,266 |
 
 📊 *Visualization:*  
-![Industries Most Affected by Layoffs](6a996526-b0dd-44c9-a1ff-8391efb55649.png)
+![Industries Most Affected by Layoffs](https://github.com/silverfrost702/Projects/raw/main/tech_layoff_trends/tech_layoff_trends/plots/industry_impact.png)
+
 
 ---
 
@@ -79,7 +80,7 @@ The goal is to identify **which industries, countries, and companies** were most
 The layoffs surged significantly during early 2023, indicating a post-pandemic market correction and operational restructuring phase.
 
 📊 *Visualization:*  
-![Monthly Tech Layoffs (2020–2025)](ac9cc0e6-97eb-4a6a-bb08-0e6856c88693.png)
+![Monthly Tech Layoffs (2020–2025)](https://github.com/silverfrost702/Projects/raw/main/tech_layoff_trends/tech_layoff_trends/plots/timeline.png)
 
 ---
 
