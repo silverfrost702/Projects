@@ -1,4 +1,4 @@
-## Insights Summary (auto-generated)
+## Insights Summary
 
 **Overall**
 - **Total layoffs (2020–2025)**: 770,546
