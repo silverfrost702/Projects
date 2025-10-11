@@ -6,6 +6,7 @@ Predicting the success of SpaceX rocket launches using mission parameters, paylo
 
 ## Repository Structure
 
+```text
 SpaceX_Launch_Success_Prediction/
 ├── src/
 │   └── spacex_pipeline.py        # Main pipeline for data processing, modeling, and evaluation
@@ -24,7 +25,6 @@ SpaceX_Launch_Success_Prediction/
 │   └── run_manifest.json
 ├── dataset_part_2.csv            # Dataset with target `Class` (1=success)
 └── README.md
-
 
 
 ---
