@@ -8,21 +8,21 @@ Predicting the success of SpaceX rocket launches using mission parameters, paylo
 
 SpaceX_Launch_Success_Prediction/
 ├── src/
-│ └── spacex_pipeline.py # Main pipeline for data processing, modeling, and evaluation
-├── plots/ # Generated visualizations
-│ ├── eda_success_by_orbit.png
-│ ├── eda_success_by_site.png
-│ ├── eda_payload_vs_outcome.png
-│ ├── confusion_matrix.png
-│ ├── roc_curve.png
-│ ├── orbit_vs_pred_success.png
-│ ├── shap_summary_dot.png
-│ └── shap_summary_bar.png
-├── models/ # Saved model artifacts
-│ ├── model_xgb.joblib
-│ ├── metrics.json
-│ └── run_manifest.json
-├── dataset_part_2.csv # Dataset with target Class (1=success)
+│   └── spacex_pipeline.py        # Main pipeline for data processing, modeling, and evaluation
+├── plots/                        # Generated visualizations
+│   ├── eda_success_by_orbit.png
+│   ├── eda_success_by_site.png
+│   ├── eda_payload_vs_outcome.png
+│   ├── confusion_matrix.png
+│   ├── roc_curve.png
+│   ├── orbit_vs_pred_success.png
+│   ├── shap_summary_dot.png
+│   └── shap_summary_bar.png
+├── models/                       # Saved model artifacts
+│   ├── model_xgb.joblib
+│   ├── metrics.json
+│   └── run_manifest.json
+├── dataset_part_2.csv            # Dataset with target `Class` (1=success)
 └── README.md
 
 
