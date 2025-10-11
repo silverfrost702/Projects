@@ -1,0 +1,31 @@
+{
+  "numeric_features": [
+    "FlightNumber",
+    "PayloadMass",
+    "Block",
+    "ReusedCount",
+    "Flights",
+    "GridFins",
+    "Reused",
+    "Legs",
+    "Year",
+    "Month",
+    "MissionComplexityScore"
+  ],
+  "categorical_features": [
+    "Orbit",
+    "LaunchSite",
+    "LandingPad"
+  ],
+  "feature_count_after_encoding": 30,
+  "metrics": {
+    "accuracy": 0.8260869565217391,
+    "precision": 0.8235294117647058,
+    "recall": 0.9333333333333333,
+    "f1": 0.875,
+    "roc_auc": 0.925,
+    "n_train": 67,
+    "n_test": 23,
+    "model": "xgb"
+  }
+}
