@@ -127,10 +127,10 @@ Relationships were established between track metadata and audio feature tables t
 - Songs with high energy and danceability tend to perform better globally.
 
 ## 🌱 Future Enhancements
--Add artist-level and genre-level comparison pages.
--Integrate Spotify API for live updates.
--Include sentiment or lyrics-based analysis.
--Publish as an interactive Power BI web app.
+- Add artist-level and genre-level comparison pages.
+- Integrate Spotify API for live updates.
+- Include sentiment or lyrics-based analysis.
+- Publish as an interactive Power BI web app.
 
 ## 👨‍💻 Author
 ### Anuva Negi
