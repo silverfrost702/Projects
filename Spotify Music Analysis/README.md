@@ -65,13 +65,14 @@ These metrics allow comparisons between tracks based on their musical qualities.
 ---
 
 ## 🗂️ Project Structure
+```text
 Spotify Music Analysis/
 │
 ├── Dashboard.pbix # Power BI dashboard file
 ├── Spotify Dataset.csv # Spotify dataset used for analysis
 ├── dashboard_screenshot.png # Screenshot used in this README
 └── README.md # Project documentation
-
+```
 
 ---
 
