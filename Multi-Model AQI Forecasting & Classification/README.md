@@ -1,6 +1,5 @@
-SmogCast: Air Quality Prediction using XGBoost, LSTM & Transformers
+SmogCast: Predicting & Forecasting Air Quality in India
+SmogCast is an end-to-end air quality analytics and forecasting system that transforms raw air-pollution sensor data into actionable insights.
+It performs real-time AQI classification and 7-day forecasting of particulate matter (PM2.5 & PM10) using a hybrid machine-learning and deep-learning pipeline.
 
-SmogCast is an end-to-end forecasting and classification pipeline for Air Quality Index (AQI) using classical ML and modern deep learning approaches.
-This project predicts air pollutant concentrations (PM2.5 & PM10) for the next 7 days and classifies AQI levels using XGBoost.
-
-Find it at: https://github.com/silverfrost702/SmogCast-Predicting-and-Forecasting-Air-Quality-in-India
+Location: https://github.com/silverfrost702/SmogCast-Predicting-and-Forecasting-Air-Quality-in-India
