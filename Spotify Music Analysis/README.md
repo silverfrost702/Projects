@@ -18,7 +18,7 @@ The dashboard allows users to explore Spotify data across years, artists, and tr
 
 The dashboard combines multiple Power BI visuals and interactive components to create a rich, engaging analytical experience.
 
-### 🎚️ Interactive Controls
+### Interactive Controls
 - **Date Range Slicer:** Filter data by release year range.  
 - **Artist Dropdown:** Narrow down all visuals to a selected artist.  
 - **Track Dropdown:** Focus on a specific track to see its metrics.  
@@ -132,6 +132,6 @@ Relationships were established between track metadata and audio feature tables t
 - Include sentiment or lyrics-based analysis.
 - Publish as an interactive Power BI web app.
 
-## 👨‍💻 Author
+## Author
 ### Anuva Negi
 📧 [anuvanegi@gmail.com]
