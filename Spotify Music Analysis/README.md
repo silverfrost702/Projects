@@ -1,20 +1,20 @@
-# 🎵 Spotify Music Analysis Dashboard (Power BI)
+# Spotify Music Analysis Dashboard (Power BI)
 
-## 📊 Overview
+## Overview
 This project presents an interactive **Spotify Music Analysis Dashboard** built in **Power BI**, designed to visualize global music streaming trends, track popularity, and artist performance metrics.  
 
 The dashboard allows users to explore Spotify data across years, artists, and tracks — making it both **analytically rich** and **visually intuitive**.
 
 ---
 
-## 🧠 Key Highlights
+## Key Highlights
 - **Total Streams:** 489 Billion  
 - **Tracks Analyzed:** 952  
 - **Average Streams per Track:** 514 Million  
 
 ---
 
-## 🧩 Dashboard Design & Features
+## Dashboard Design & Features
 
 The dashboard combines multiple Power BI visuals and interactive components to create a rich, engaging analytical experience.
 
@@ -26,7 +26,7 @@ The dashboard combines multiple Power BI visuals and interactive components to c
 
 ---
 
-### 📈 Visuals and Charts
+### Visuals and Charts
 
 #### 1. **Streams by Released Year (Line Chart)**
 - Displays how total streams have evolved over time.  
@@ -64,7 +64,7 @@ These metrics allow comparisons between tracks based on their musical qualities.
 
 ---
 
-## 🗂️ Project Structure
+## Project Structure
 ```text
 Spotify Music Analysis/
 │
@@ -76,7 +76,7 @@ Spotify Music Analysis/
 
 ---
 
-## 🧹 Data Cleaning & Modeling
+## Data Cleaning & Modeling
 Data preparation was done in **Power Query**, involving:
 - Removing null or duplicate records  
 - Converting date fields and data types  
@@ -92,7 +92,7 @@ Relationships were established between track metadata and audio feature tables t
 
 ---
 
-## 🧮 Power BI Techniques Used
+## Power BI Techniques Used
 - **Power Query** for data transformation  
 - **DAX** for calculated metrics and KPIs  
 - **Dynamic Slicers** for filtering by artist, track, and year  
@@ -102,14 +102,14 @@ Relationships were established between track metadata and audio feature tables t
 
 ---
 
-## 🖼️ Dashboard Preview
+## Dashboard Preview
 ![Spotify Dashboard Screenshot](./dashboard_img.jpg)
 
 > The dashboard uses Spotify’s dark theme for a professional and brand-consistent look while maintaining clear visual contrast.
 
 ---
 
-## 🚀 How to Use
+## How to Use
 1. Clone or download the repository:
    ```bash
    git clone https://github.com/yourusername/spotify-music-analysis.git
@@ -120,13 +120,13 @@ Relationships were established between track metadata and audio feature tables t
 4. Refresh the data and explore using filters, dropdowns, and slicers.
 
 
-## 💡 Insights 
+## Insights 
 - Streaming activity has grown exponentially since 2015.
 - “Blinding Lights” by The Weeknd is the most streamed track.
 - Fridays show the highest stream counts — correlating with release schedules.
 - Songs with high energy and danceability tend to perform better globally.
 
-## 🌱 Future Enhancements
+## Future Enhancements
 - Add artist-level and genre-level comparison pages.
 - Integrate Spotify API for live updates.
 - Include sentiment or lyrics-based analysis.
